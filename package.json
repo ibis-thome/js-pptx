@@ -1,6 +1,6 @@
 {
   "name": "js-pptx",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Pure Javascript reader/writer for PowerPoint .pptx files",
   "main": "lib/pptx.js",
   "scripts": {
@@ -20,7 +20,6 @@
     "async": "^1.4.0",
     "jszip": "^3.1.5",
     "lodash": "^3.10.0",
-    "msexcel-builder": "0.0.2",
     "xml2js": "^0.4.9",
     "xmlbuilder": "^2.6.4",
     "query": "protobi/query"

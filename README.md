@@ -31,7 +31,7 @@ Pure Javascript reader/writer/editor for PowerPoint, for use in Node.js.
 It can currently:
  * read an existing PPTX file
  * retain all existing content
- * add slides, shapes, charts, text, images and images
+ * add slides, shapes, charts, text, images, connections and comments
  * edit existing text fields
  * save as a PPTX file
 
@@ -83,7 +83,7 @@ var path = require('path');
 /* GET home page. */
 router.get('/', function(req, res, next) {
 	//read existing presentation
-	var INFILE = '../test/files/TESTFILE.pptx';
+	var INFILE = '../test/files/ibis_test.pptx';
 	fs.readFile(INFILE, function(err, data) {
 		if (err) throw err;
 		//create new presentation
@@ -91,7 +91,7 @@ router.get('/', function(req, res, next) {
 		pptx.load(data, function(err) {
 			var slide=pptx.addSlide("SlideLayout1");
 			slide.addImg(imgData,{x:1,y:2,w:3,h:1,type:"cm"});
-			res.setHeader('Content-Disposition', 'attachment; filename=FILENAME.pptx');
+			res.setHeader('Content-Disposition', 'attachment; filename=IBIS-Analyse.pptx');
 			res.send(pptx.toBuffer());
 			
 		});
@@ -106,9 +106,9 @@ module.exports = router;
 Several Presentation properties can be set:
 
 ```javascript
-	pptx.setCompany("Company");
-	pptx.setAuthor("J");
-	pptx.setTitle("Analyse Company");
+	pptx.setCompany("IBIS");
+	pptx.setAuthor("J.M.");
+	pptx.setTitle("Analyse IBIS");
 	pptx.setSubject("Annual Report");
 ```
 
@@ -121,63 +121,6 @@ The default name is slideLayout + the number of referring master slide. (located
 ```javascript
 //Syntax
 var slide = pptx.addSlide(slideLayout1);
-```
-
-**************************************************************************************************
-## Adding Text
-```javascript
-// Syntax
-slide.addText({text, {OPTIONS}});
-slide.addText(
-	[
-		{text, {Options}},
-		{text, {Options}},
-		{text, {Options}}
-	],
-	{position}
-)
-```
-
-| Option				| Type      | Default		| Description				| Possible Values							|
-| :-----------------	| :---------| :----------	| :------------------------	| :---------------------------				|
-| 'position.x'			| Numeric   | 				| horizontal location		| 0-n										|
-| 'position.y'			| Numeric   | 				| vertical location			| 0-n										|
-| 'position.w'			| Numeric   | 				| width						| 0-n										|
-| 'position.h'			| Numeric   | 				| height					| 0-n										|
-| 'position.type'		| Numeric   | "inch"		| measuring unit			| cm, inch or point(72 ppi)					|
-| 'algn'				| String    | "l"			| text alignment			| ctr (center),l (left),r (right), dist (distributed), just (justified)|
-| 'bold'				| String    | "0"			| bold text					| 0: false, 1:true							|
-| 'breakLine			| String	| "0"			| appends a line break		| 0:false, 1:true							|
-| 'color'				| String    | "000000"		| text color				| hex color code							|
-| 'fill'				| String    | -				| fill color of text Shape	| hex color code							|
-| 'italic'				| String    | "0"			| italic text				| 0: false, 1:true							|
-| 'lang'				| String    | "de-DE"		| text language				| language setting (i.e.'en-US')			|
-| 'lineColor'			| String    | -				| color of text shape border| hex color code							|
-| 'lineSize'			| String    | -				| size of text shape border | line size in pt							|
-| 'size'				| Numeric   | 18			| font size					| font size in pt							|
-| 'typeface'			| String    | "Arial"		| font face					| font faces (i.e."Arial")					|
-| 'underline'			| String    | "none"		| underline text			| sng (single Line), dbl (two Lines), dotted, dash|
-
-**************************************************************************************************
-## Edit existing TextField
-Edit an existing TextField (i.e. from Master Slide)
-```javascript
-// Syntax
-slide.editTextContent(newText,TextField);
-```
-| Option				| Type		| Default		| Description				| Possible Values				|
-| :-----------------	| :---------| :----------	| :------------------------	| :---------------------------	|
-| 'newText'				| String	| 				| new Text					| Any String					|
-| 'TextField'			| String	| 				| Name of the TextField		| Valid Names					|
-
-Text Fields are named by default Titel or Textplatzhalter 
-Master Text Field names located in ppt/slideLayouts/slideLayout[X].xml inside the <p:cNvPr> Element (replace [X] with number)
-
-Example:
-```javascript
-// Syntax
-slide.editTextContent("Das ist der neue Text","Titel 1");
-slide.editTextContent("Noch mehr Text","Textplatzhalter");
 ```
 										
 **************************************************************************************************
@@ -249,7 +192,7 @@ slide4.addTable({rows:rows, type:"cm", rowH:[3.5,4], colW:3,position:position});
 
 **************************************************************************************************
 
-##  Adding Charts and Shapes (from old library not yet used current lib)
+##  Adding Charts and Shapes
 
 ```js
 "use strict";
@@ -309,6 +252,20 @@ fs.readFile(INFILE, function (err, data) {
         .cy(PPTX.emu.inch(0.75))
         .prstGeom('trapezoid');
 
+    // add shape with text options
+    slide1.addShape()
+        .text([
+            {
+                text: oComment.text, options:
+                    { 
+                        typeface: "Arial", 
+                        size: 12, 
+                        italic: true,
+                        color: "FFFFFF"
+                    }
+            }
+        ], { overflow: false })    
+
     var chart = slide3.addChart(barChart, function (err, chart) {
 
       fs.writeFile(OUTFILE, pptx.toBuffer(), function (err) {
@@ -316,6 +273,8 @@ fs.readFile(INFILE, function (err, data) {
         console.log("open " + OUTFILE)
       });
     });
+
+
   });
 });
 
@@ -341,7 +300,72 @@ var barChart = {
   ]
 }
 ```
-**********************************************************************
+
+**************************************************************************************************
+
+### ShapeProperties options
+
+| Option				| Type      | Default		| Description				| Possible Values							|
+| :-----------------	| :---------| :----------	| :------------------------	| :---------------------------				|
+| 'x'			        | Numeric   | 				| horizontal location		| 0-n	cm, inch or point(72 ppi)			|
+| 'y'			        | Numeric   | 				| vertical location			| 0-n	cm, inch or point(72 ppi)			|
+| 'cx'			        | Numeric   | 				| width						| 0-n	cm, inch or point(72 ppi)			|
+| 'cy'			        | Numeric   | 				| height					| 0-n	cm, inch or point(72 ppi)			|
+| 'fill'		        | String    |       		| filling color 			| hex color code  				            |
+| 'prstGeom'		    | String    |       		| shape type 			    | e.g. "rect"  				                |
+
+**************************************************************************************************
+
+### Shape text options
+
+| Option				| Type      | Default		| Description				| Possible Values							|
+| :-----------------	| :---------| :----------	| :------------------------	| :---------------------------	            |
+| 'bold'				| String    |    			| bold text					| 0: false, 1:true							|
+| 'breakLine			| String	|    			| appends a line break		| 0:false, 1:true							|
+| 'color'				| String    |       		| text color				| hex color code							|
+| 'fill'				| String    |    			| fill color of text Shape	| hex color code							|
+| 'italic'				| String    |   			| italic text				| 0: false, 1:true							|
+| 'lang'				| String    |       		| text language				| language setting (i.e.'en-US')			|
+| 'lineColor'			| String    |       		| color of text shape border| hex color code							|
+| 'lineSize'			| String    |   			| size of text shape border | line size in pt							|
+| 'size'				| Numeric   |   			| font size					| font size in pt							|
+| 'typeface'			| String    |       		| font face					| font faces (i.e."Arial")					|
+| 'underline'			| String    |       		| underline text			| sng (single Line), dbl (two Lines), dotted, dash|
+
+**************************************************************************************************
+
+## Adding Comments
+
+```javascript
+// Syntax
+slide.addComment({
+	author: "John Doe",
+	authorInitials: "JD",
+	created: "2018-11-05T13:59:34.333Z",
+	text: "My very first comment",
+	position: {
+		type:"cm"
+		x:8.59581956797967
+		y:3.64135959339263
+	}
+});
+
+```
+
+**************************************************************************************************
+### Comment options
+
+| Option				| Type      | Default		| Description											| Possible Values							|
+| :-----------------	| :---------| :----------	| :---------------------------------------------------	| :--------------------------------------	|
+| 'author'			    | String    | ""			| Author name	|										|
+| 'authorInitials'		| String    | ""			| Author initials										| 											|
+| 'created'				| String    | ""			| height												| 											|
+| 'text'				| String    | ""			| Comment text											| 											|
+| 'position.x'			| String    | "0"			| Horizontal Position									| 0-n										|
+| 'position.y'			| String    | "0"			| Vertical Position										| 0-n										|
+| 'position.type'		| String    | "inch"		| Position measure unit									| cm, inch or point(72 ppi)					|
+
+**************************************************************************************************
 
 # Inspiration
 Inspired by [officegen](https://github.com/ZivBarber/officegen),
