@@ -4,14 +4,15 @@ var assert = require('assert');
 var fs = require("fs");
 var PPTX = require('..');
 var xml2js = require('xml2js');
-var xmlbuilder = require('xmlbuilder')
+var xmlbuilder = require('xmlbuilder');
 
-var INFILE = './lab/chart-null/chart-null.pptx';
-var OUTFILE = '/tmp/chart.pptx';
+var INFILE = './test/files/ibis_test_neu.pptx';
+var OUTFILE = './test/files/ibis_test_neu-a.pptx';
 
 describe('PPTX', function () {
 
   it('can read, modify, write and read', function (done) {
+
     fs.readFile(INFILE, function (err, data) {
       if (err) throw err;
       var pptx = new PPTX.Presentation();
@@ -22,12 +23,13 @@ describe('PPTX', function () {
         var slide1 = pptx.getSlide('slide1');
         var slide2 = pptx.addSlide("slideLayout6");
         slide1.addChart(barChart, function (err, chart) {
-          if (err) throw(err);
+          if (err) throw (err);
 
-          slide2.addChart(barChart2, function (err, chart) {
-            if (err) throw(err);
+          slide2.addChart(barChart2, async function (err, chart) {
+            if (err) throw (err);
 
-            fs.writeFile(OUTFILE, pptx.toBuffer(), function (err) {
+            var buffer = await pptx.toBuffer();
+            fs.writeFile(OUTFILE, buffer, function (err) {
               if (err) throw err;
               console.log("open " + OUTFILE)
               done();

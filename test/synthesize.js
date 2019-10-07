@@ -8,33 +8,33 @@ var INFILE = './test/files/minimal.pptx';
 var STORE = './test/files/minimal.json';
 var OUTFILE = './test/files/minimal-copy.pptx';
 
-var zip1 = new JSZip(fs.readFileSync(INFILE));
-var copy = {};
+JSZip.loadAsync(fs.readFileSync(INFILE)).then(async zip1 => {
+  var copy = {};
 
-Object.keys(zip1.files).forEach(function (key) {
-  copy[key] = zip1.file(key).asText();
-});
+  await Promise.all(Object.keys(zip1.files).map(async key => {
+    var text = await zip1.file(key).async("string");
+    copy[key] = text;
+  }));
 
-fs.writeFileSync(STORE, JSON.stringify(copy, null,4))
+  fs.writeFileSync(STORE, JSON.stringify(copy, null, 4))
 
-var json = fs.readFileSync(STORE, 'utf8');
-var obj = JSON.parse(json);
+  var json = fs.readFileSync(STORE, 'utf8');
+  var obj = JSON.parse(json);
 
-var zip2 = new JSZip();
-for (var key in obj) {
-  zip2.file(key, obj[key]);
-}
+  var zip2 = new JSZip();
+  for (var key in obj) {
+    zip2.file(key, obj[key]);
+  }
 
-var buffer = zip2.generate({type:"nodebuffer", compression: 'DEFLATE'});
+  var buffer = await zip2.generateAsync({ type: "nodebuffer", compression: 'DEFLATE' });
+  fs.writeFile(OUTFILE, buffer, function (err) {
+    if (err) throw err;
+  });
 
-fs.writeFile(OUTFILE, buffer, function(err) {
-  if (err) throw err;
-});
-
-var zip3 = new JSZip();
-zip3.file('json', JSON.stringify(copy, null,4))
-var buffer3 = zip3.generate({type:"nodebuffer", compression: 'DEFLATE'});
-
-fs.writeFile('./test/files/minimal.json.jar', buffer3, function(err) {
-  if (err) throw err;
+  var zip3 = new JSZip();
+  zip3.file('json', JSON.stringify(copy, null, 4))
+  var buffer3 = await zip3.generateAsync({ type: "nodebuffer", compression: 'DEFLATE' });
+  fs.writeFile('./test/files/minimal.json.jar', buffer3, function (err) {
+    if (err) throw err;
+  });
 });

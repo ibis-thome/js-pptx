@@ -53,10 +53,10 @@ describe('PPTX', function () {
               .prstGeom('ellipse');
         }
 
-        var chart = slide1.addChart(barChart, function (err, chart) {
+        var chart = slide1.addChart(barChart, async function (err, chart) {
 
-
-          fs.writeFile(OUTFILE, pptx.toBuffer(), function (err) {
+          var buffer = await pptx.toBuffer();
+          fs.writeFile(OUTFILE, buffer, function (err) {
             if (err) throw err;
 
             fs.readFile(OUTFILE, function (err, data) {
@@ -68,7 +68,8 @@ describe('PPTX', function () {
                   y: '914400',
                   cx: '1828800',
                   cy: '685800',
-                  prstGeom: 'trapezoid' });
+                  prstGeom: 'trapezoid',
+                  fill: null, });
               });
               console.log("open "+OUTFILE)
               done();
