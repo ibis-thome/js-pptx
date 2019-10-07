@@ -19,17 +19,12 @@
   "dependencies": {
     "async": "^1.4.0",
     "jszip": "^3.1.5",
-    "lodash": "^3.10.0",
     "xml2js": "^0.4.9",
-    "xmlbuilder": "^2.6.4",
-    "query": "protobi/query"
+    "xmlbuilder": "^13.0.2"
   },
   "devDependencies": {},
   "directories": {
     "test": "test"
-  },
-  "git_dependencies": {
-  	"query": "git://github.com/protobi/query.git"
   },
   "keywords": [
     "PowerPoint",
