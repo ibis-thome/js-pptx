@@ -128,17 +128,20 @@ var slide = pptx.addSlide(slideLayout1);
 ## Adding Images
 ```javascript
 // Syntax
-slide2.addImg(imgData,position);
+slide2.addImg({ data: imgData, position: { x: 1, y: 1, w: 50, h: 50, type: "cm" }, base64: true, link: "link" });
+
 ```
 
-| Option				| Type		| Default		| Description				| Possible Values							|
-| :-----------------	| :---------| :----------	| :------------------------	| :---------------------------				|
-| 'position.x'			| Numeric	| 				| horizontal location		| 0-n										|
-| 'position.y'			| Numeric	| 				| vertical location			| 0-n										|
-| 'position.w'			| Numeric	| 				| width						| 0-n										|
-| 'position.h'			| Numeric	| 				| height					| 0-n										|
-| 'position.type'		| Numeric	| "inch"		| measuring unit			| cm, inch or point(72 ppi)					|
-| 'imgData'				| String	|				| Base64 String				| valid base64 string						|
+| Option				| Type		    | Default		| Description				            | Possible Values							|
+| :-----------------	| :-------------| :----------	| :-------------------------------------| :---------------------------				|
+| 'position.x'			| Numeric	    | 				| horizontal location		            | 0-n										|
+| 'position.y'			| Numeric	    | 				| vertical location			            | 0-n										|
+| 'position.w'			| Numeric	    | 				| width						            | 0-n										|
+| 'position.h'			| Numeric	    | 				| height					            | 0-n										|
+| 'position.type'		| Numeric	    | "inch"		| measuring unit			            | cm, inch or point(72 ppi)					|
+| 'data'				| String/Buffer	|				| Base64 String	or Binary Buffer		| 						                    |
+| 'base64'				| Boolean	    |				| Indicate whether imgData is base64	| true/false			                    |
+| 'link'				| String	    |				| Link URL                             	|               		                    |
 
 **************************************************************************************************
 ## Adding tables
