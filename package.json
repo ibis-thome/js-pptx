@@ -1,6 +1,6 @@
 {
   "name": "js-pptx",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "Pure Javascript reader/writer for PowerPoint .pptx files",
   "main": "lib/pptx.js",
   "scripts": {
